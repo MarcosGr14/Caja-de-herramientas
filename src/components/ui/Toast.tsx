@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { CheckCircle2, AlertCircle, Info, X } from 'lucide-react';
+import { Check, AlertCircle, Info, X } from 'lucide-react';
 
 export type ToastType = 'success' | 'error' | 'info';
 
@@ -70,32 +70,30 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   return (
     <ToastContext.Provider value={contextValue}>
       {children}
-      {/* Toast container floating at bottom-right or top-center */}
-      <div className="fixed bottom-20 md:bottom-6 right-4 left-4 md:left-auto md:w-96 z-50 flex flex-col gap-2 pointer-events-none">
+      {/* Toast container: minimal pill bottom-center, monochromatic editorial look */}
+      <div className="fixed bottom-20 md:bottom-8 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 pointer-events-none max-w-sm w-full px-4">
         {toasts.map((t) => (
           <div
             key={t.id}
-            className="pointer-events-auto flex items-start gap-3 p-3.5 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md transition-all duration-200 animate-in fade-in slide-in-from-bottom-3"
+            className="pointer-events-auto flex items-center justify-between gap-3 px-4 py-2.5 rounded-full shadow-2xl border border-hairline bg-[#111113] text-[#F4F4F5] dark:bg-[#F4F4F5] dark:text-[#111113] text-xs font-medium transition-all duration-200 animate-in fade-in slide-in-from-bottom-2"
           >
-            <div className="mt-0.5 shrink-0">
-              {t.type === 'success' && <CheckCircle2 className="w-5 h-5 text-emerald-500" />}
-              {t.type === 'error' && <AlertCircle className="w-5 h-5 text-rose-500" />}
-              {t.type === 'info' && <Info className="w-5 h-5 text-sky-500" />}
+            <div className="flex items-center gap-2 min-w-0">
+              {t.type === 'success' && <Check className="w-3.5 h-3.5 text-emerald-400 dark:text-emerald-600 shrink-0" />}
+              {t.type === 'error' && <AlertCircle className="w-3.5 h-3.5 text-rose-400 dark:text-rose-600 shrink-0" />}
+              {t.type === 'info' && <Info className="w-3.5 h-3.5 opacity-80 shrink-0" />}
+              <span className="truncate">{t.title}</span>
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{t.title}</p>
-              {t.description && (
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 break-words">
-                  {t.description}
-                </p>
-              )}
-            </div>
+            {t.description && (
+              <span className="text-[11px] opacity-70 hidden sm:inline truncate">
+                {t.description}
+              </span>
+            )}
             <button
               onClick={() => removeToast(t.id)}
-              className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg transition"
+              className="p-1 opacity-60 hover:opacity-100 transition rounded-full shrink-0"
               aria-label="Cerrar notificación"
             >
-              <X className="w-4 h-4" />
+              <X className="w-3 h-3" />
             </button>
           </div>
         ))}

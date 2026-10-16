@@ -1,8 +1,9 @@
 import React, { useState, useEffect, Suspense, useCallback } from 'react';
 import { Header } from './components/layout/Header';
-import { Sidebar } from './components/layout/Sidebar';
-import { MobileNav } from './components/layout/MobileNav';
 import { HomeScreen } from './components/layout/HomeScreen';
+import { ToolPageContainer } from './components/layout/ToolPageContainer';
+import { Footer } from './components/layout/Footer';
+import { MobileNav } from './components/layout/MobileNav';
 import { CommandPalette } from './components/layout/CommandPalette';
 import { SettingsModal } from './components/layout/SettingsModal';
 import { ToastProvider, useToast } from './components/ui/Toast';
@@ -14,10 +15,12 @@ import { TOOLS_REGISTRY } from './data/tools';
 import { ToolDefinition } from './types/tools';
 
 const DEFAULT_FAVORITES: string[] = [
-  'contador-palabras',
-  'formateador-json',
-  'colores-paletas',
-  'generador-contrasenas',
+  'bases-bits',
+  'subredes-ipv4',
+  'chmod-calc',
+  'cron-parser',
+  'regex-tester',
+  'epoch-converter',
 ];
 
 const DEFAULT_RECENTS: string[] = [];
@@ -32,6 +35,9 @@ function MainApp() {
     const hash = window.location.hash.replace('#/', '').replace('#', '');
     return TOOLS_REGISTRY.some((t) => t.id === hash) ? hash : null;
   });
+
+  // Selected Category filter ('all' or category.id)
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
   // Local storage for Favorites and Recents
   const [favorites, setFavorites] = useLocalStorage<string[]>('app-favorites', DEFAULT_FAVORITES);
@@ -67,6 +73,16 @@ function MainApp() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
+  const handleCategorySelect = useCallback((catId: string) => {
+    setSelectedCategory(catId);
+    if (currentToolId) {
+      window.location.hash = '';
+      setCurrentToolId(null);
+    }
+    setFilterFavoritesInHome(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentToolId]);
+
   // Listen to browser hash change (back/forward buttons)
   useEffect(() => {
     const handleHashChange = () => {
@@ -101,10 +117,10 @@ function MainApp() {
     const isFav = favorites.includes(id);
     if (isFav) {
       setFavorites(favorites.filter((favId) => favId !== id));
-      success('Herramienta quitada de favoritos');
+      success('Herramienta quitada de favoritas');
     } else {
       setFavorites([...favorites, id]);
-      success('Herramienta añadida a favoritos');
+      success('Herramienta guardada en favoritas');
     }
   };
 
@@ -114,41 +130,45 @@ function MainApp() {
   // Sync document title with active tool
   useEffect(() => {
     if (activeTool) {
-      document.title = `${activeTool.name} — Caja de Herramientas`;
+      document.title = `${activeTool.name.toUpperCase()} — CAJA.tools`;
     } else {
-      document.title = 'Caja de Herramientas — Hub de Utilidades 100% en el Navegador';
+      document.title = 'CAJA.tools — Hub de Utilidades 100% en el Navegador';
     }
   }, [activeTool]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors">
-      {/* Top Header */}
-      <Header
-        currentToolId={currentToolId}
-        onNavigateHome={navigateToHome}
-        onOpenSearch={() => setIsSearchOpen(true)}
-        onOpenSettings={() => setIsSettingsOpen(true)}
-      />
-
-      {/* Main Body Layout: Sidebar + Content */}
-      <div className="flex-1 flex w-full max-w-7xl mx-auto">
-        {/* Desktop Sidebar */}
-        <Sidebar
+    // Outer Frame on Desktop: Centered Window with Soft Shadow & Margins
+    <div className="min-h-screen bg-[var(--bg-exterior)] flex flex-col items-center justify-start lg:p-6 xl:p-8 transition-colors">
+      
+      {/* Window Panel Container (Window Frame on >=1024px, Fullscreen on mobile/tablet) */}
+      <div className="w-full max-w-[1520px] bg-[var(--bg-panel)] lg:rounded-[20px] border-0 lg:border border-hairline window-frame flex flex-col min-h-screen lg:min-h-[calc(100vh-3rem)] overflow-hidden transition-all duration-300 relative text-[var(--text-main)]">
+        
+        {/* Top Editorial Header */}
+        <Header
           currentToolId={currentToolId}
-          onSelectTool={navigateToTool}
-          favorites={favorites}
+          activeCategory={selectedCategory}
+          onSelectCategory={handleCategorySelect}
+          onNavigateHome={navigateToHome}
+          onOpenSearch={() => setIsSearchOpen(true)}
+          onOpenSettings={() => setIsSettingsOpen(true)}
         />
 
-        {/* Content Area */}
-        <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 pb-24 md:pb-12">
+        {/* Content Canvas */}
+        <main className="flex-1 w-full pb-20 lg:pb-8">
           {activeTool ? (
-            <div className="space-y-6">
+            <ToolPageContainer
+              tool={activeTool}
+              onSelectTool={navigateToTool}
+              onNavigateHome={navigateToHome}
+              favorites={favorites}
+              onToggleFavorite={handleToggleFavorite}
+            >
               <ErrorBoundary fallbackTitle={`Error en ${activeTool.name}`}>
                 <Suspense fallback={<ToolSkeleton />}>
                   <activeTool.component />
                 </Suspense>
               </ErrorBoundary>
-            </div>
+            </ToolPageContainer>
           ) : (
             <HomeScreen
               onSelectTool={navigateToTool}
@@ -157,12 +177,17 @@ function MainApp() {
               recentToolIds={recentToolIds}
               filterOnlyFavorites={filterFavoritesInHome}
               onClearFavoritesFilter={() => setFilterFavoritesInHome(false)}
+              selectedCategory={selectedCategory}
+              onSelectCategory={handleCategorySelect}
             />
           )}
         </main>
+
+        {/* Minimal Editorial Footer */}
+        <Footer />
       </div>
 
-      {/* Mobile Bottom Navigation */}
+      {/* Mobile Bottom Navigation Bar */}
       <MobileNav
         currentToolId={currentToolId}
         onNavigateHome={navigateToHome}

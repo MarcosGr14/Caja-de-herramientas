@@ -4,7 +4,7 @@ import { ThemeMode, AccentColor } from '../types/theme';
 
 export function useTheme() {
   const [theme, setTheme] = useLocalStorage<ThemeMode>('app-theme-mode', 'system');
-  const [accent, setAccent] = useLocalStorage<AccentColor>('app-theme-accent', 'celeste');
+  const [accent, setAccent] = useLocalStorage<AccentColor>('app-theme-accent', 'rojo');
 
   useEffect(() => {
     const root = document.documentElement;
