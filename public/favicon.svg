@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="boxGrad" x1="64" y1="96" x2="448" y2="448" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#6366F1" />
+      <stop offset="100%" stop-color="#4F46E5" />
+    </linearGradient>
+  </defs>
+  <rect x="32" y="32" width="448" height="448" rx="112" fill="url(#boxGrad)" />
+  <path d="M192 144V112C192 94.3269 206.327 80 224 80H288C305.673 80 320 94.3269 320 112V144" stroke="#EEF2FF" stroke-width="28" stroke-linecap="round" />
+  <rect x="88" y="144" width="336" height="256" rx="48" fill="#F8FAFC" />
+  <path d="M88 232H424" stroke="#E2E8F0" stroke-width="8" stroke-linecap="round" />
+  <rect x="232" y="212" width="48" height="40" rx="10" fill="#6366F1" />
+  <circle cx="256" cy="232" r="6" fill="#FFFFFF" />
+  <path d="M168 316L208 356M196 284C204.837 275.163 219.163 275.163 228 284C236.837 292.837 236.837 307.163 228 316L180 364C171.163 372.837 156.837 372.837 148 364C139.163 355.163 139.163 340.837 148 332L196 284Z" stroke="#4F46E5" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M336 280L342 298L360 304L342 310L336 328L330 310L312 304L330 298L336 280Z" fill="#F59E0B" />
+</svg>

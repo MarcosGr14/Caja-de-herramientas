@@ -1,0 +1,6 @@
+{
+  "name": "Caja de Herramientas",
+  "description": "Hub de utilidades rápidas, privadas y 100% en el navegador: contador de palabras, mayúsculas, base64, JSON, hashes, QR, contraseñas, colores, unidades, notas y PDF.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

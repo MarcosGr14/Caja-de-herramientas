@@ -1,0 +1,156 @@
+@import "tailwindcss";
+
+:root {
+  font-family: 'Nunito', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  
+  /* Base Light */
+  --bg-app: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-surface-subtle: #f1f5f9;
+  --bg-surface-hover: #e2e8f0;
+  --border-app: #e2e8f0;
+  --border-focus: #cbd5e1;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --text-faint: #94a3b8;
+
+  /* Default Celeste */
+  --accent-color: #0ea5e9;
+  --accent-hover: #0284c7;
+  --accent-subtle: #f0f9ff;
+  --accent-border: #bae6fd;
+  --accent-text: #0369a1;
+  --accent-ring: rgba(14, 165, 233, 0.35);
+}
+
+.dark {
+  --bg-app: #090d16;
+  --bg-surface: #111827;
+  --bg-surface-subtle: #1a2234;
+  --bg-surface-hover: #222f46;
+  --border-app: #243048;
+  --border-focus: #3b4e6d;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-faint: #64748b;
+
+  --accent-subtle: rgba(14, 165, 233, 0.15);
+  --accent-border: rgba(14, 165, 233, 0.35);
+  --accent-text: #38bdf8;
+  --accent-ring: rgba(56, 189, 248, 0.4);
+}
+
+/* 6 Pastel Accent Themes */
+[data-accent="rosa"] {
+  --accent-color: #ec4899;
+  --accent-hover: #db2777;
+  --accent-subtle: #fdf2f8;
+  --accent-border: #fbcfe8;
+  --accent-text: #be185d;
+  --accent-ring: rgba(236, 72, 153, 0.35);
+}
+.dark[data-accent="rosa"], .dark [data-accent="rosa"] {
+  --accent-subtle: rgba(236, 72, 153, 0.16);
+  --accent-border: rgba(236, 72, 153, 0.35);
+  --accent-text: #f472b6;
+  --accent-ring: rgba(244, 114, 182, 0.4);
+}
+
+[data-accent="lavanda"] {
+  --accent-color: #8b5cf6;
+  --accent-hover: #7c3aed;
+  --accent-subtle: #f5f3ff;
+  --accent-border: #ddd6fe;
+  --accent-text: #6d28d9;
+  --accent-ring: rgba(139, 92, 246, 0.35);
+}
+.dark[data-accent="lavanda"], .dark [data-accent="lavanda"] {
+  --accent-subtle: rgba(139, 92, 246, 0.16);
+  --accent-border: rgba(139, 92, 246, 0.35);
+  --accent-text: #a78bfa;
+  --accent-ring: rgba(167, 139, 250, 0.4);
+}
+
+[data-accent="menta"] {
+  --accent-color: #10b981;
+  --accent-hover: #059669;
+  --accent-subtle: #ecfdf5;
+  --accent-border: #a7f3d0;
+  --accent-text: #047857;
+  --accent-ring: rgba(16, 185, 129, 0.35);
+}
+.dark[data-accent="menta"], .dark [data-accent="menta"] {
+  --accent-subtle: rgba(16, 185, 129, 0.16);
+  --accent-border: rgba(16, 185, 129, 0.35);
+  --accent-text: #34d399;
+  --accent-ring: rgba(52, 211, 153, 0.4);
+}
+
+[data-accent="celeste"] {
+  --accent-color: #0ea5e9;
+  --accent-hover: #0284c7;
+  --accent-subtle: #f0f9ff;
+  --accent-border: #bae6fd;
+  --accent-text: #0369a1;
+  --accent-ring: rgba(14, 165, 233, 0.35);
+}
+.dark[data-accent="celeste"], .dark [data-accent="celeste"] {
+  --accent-subtle: rgba(14, 165, 233, 0.16);
+  --accent-border: rgba(14, 165, 233, 0.35);
+  --accent-text: #38bdf8;
+  --accent-ring: rgba(56, 189, 248, 0.4);
+}
+
+[data-accent="durazno"] {
+  --accent-color: #f97316;
+  --accent-hover: #ea580c;
+  --accent-subtle: #fff7ed;
+  --accent-border: #fed7aa;
+  --accent-text: #c2410c;
+  --accent-ring: rgba(249, 115, 22, 0.35);
+}
+.dark[data-accent="durazno"], .dark [data-accent="durazno"] {
+  --accent-subtle: rgba(249, 115, 22, 0.16);
+  --accent-border: rgba(249, 115, 22, 0.35);
+  --accent-text: #fb923c;
+  --accent-ring: rgba(251, 146, 60, 0.4);
+}
+
+[data-accent="salvia"] {
+  --accent-color: #65a30d;
+  --accent-hover: #4d7c0f;
+  --accent-subtle: #f7fee7;
+  --accent-border: #d9f99d;
+  --accent-text: #3f6212;
+  --accent-ring: rgba(101, 163, 13, 0.35);
+}
+.dark[data-accent="salvia"], .dark [data-accent="salvia"] {
+  --accent-subtle: rgba(101, 163, 13, 0.16);
+  --accent-border: rgba(101, 163, 13, 0.35);
+  --accent-text: #a3e635;
+  --accent-ring: rgba(163, 230, 53, 0.4);
+}
+
+/* Custom Scrollbar for cozy aesthetic */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-app);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-focus);
+}
+
+/* Safe area padding utilities */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 1rem);
+}
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0);
+}
