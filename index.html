@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>Caja de Herramientas</title>
-    <meta name="description" content="Hub de utilidades rápidas, privadas y 100% en el navegador: bases y bits, subredes IPv4, chmod, cron, regex, timestamp Unix, texto, JSON, hashes, QR, contraseñas, colores y PDF." />
+    <title>Caja de Herramientas — Hub de Utilidades 100% en el Navegador</title>
+    <meta name="description" content="Hub de utilidades web rápidas y seguras que corren 100% en tu navegador: contador de palabras, mayúsculas, base64, JSON, hashes, QR, contraseñas, colores, unidades, notas y PDF." />
     <meta name="theme-color" content="#f8fafc" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -17,9 +17,11 @@
     <meta property="og:description" content="Hub de utilidades web rápidas y seguras que corren 100% en tu navegador: sin backend, sin registro y sin APIs externas." />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
-    <!-- Self-hosted typography via @fontsource-variable/outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   </head>
-  <body class="selection:bg-[var(--accent-subtle)] selection:text-[var(--accent-color)] antialiased min-h-screen">
+  <body class="bg-surface text-surface-foreground antialiased selection:bg-accent/20 selection:text-accent-foreground min-h-screen">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

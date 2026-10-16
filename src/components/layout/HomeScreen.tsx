@@ -1,18 +1,17 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Search,
   Star,
   Clock,
   Sparkles,
-  Layers,
+  ShieldCheck,
   ChevronRight,
   Filter,
   Check,
-  X,
 } from 'lucide-react';
 import { TOOLS_REGISTRY, CATEGORIES_LIST } from '../../data/tools';
 import { ToolDefinition, ToolCategory } from '../../types/tools';
-import { HeroSection } from './HeroSection';
+import { Card } from '../ui/Card';
 import { useToast } from '../ui/Toast';
 
 export interface HomeScreenProps {
@@ -22,8 +21,6 @@ export interface HomeScreenProps {
   recentToolIds: string[];
   filterOnlyFavorites?: boolean;
   onClearFavoritesFilter?: () => void;
-  selectedCategory?: string;
-  onSelectCategory?: (catId: string) => void;
 }
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({
@@ -33,18 +30,20 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   recentToolIds,
   filterOnlyFavorites = false,
   onClearFavoritesFilter,
-  selectedCategory = 'all',
-  onSelectCategory,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const gridRef = useRef<HTMLDivElement>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const { success } = useToast();
 
-  const scrollToGrid = () => {
-    gridRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  // Dynamic greeting based on time of day
+  const greeting = useMemo(() => {
+    const hour = new Date().getHours();
+    if (hour >= 6 && hour < 12) return '¡Buenos días!';
+    if (hour >= 12 && hour < 20) return '¡Buenas tardes!';
+    return '¡Buenas noches!';
+  }, []);
 
-  // Filter tools based on search and selectedCategory
+  // Filter tools based on search and category
   const filteredTools = useMemo(() => {
     return TOOLS_REGISTRY.filter((t) => {
       if (filterOnlyFavorites && !favorites.includes(t.id)) {
@@ -66,291 +65,243 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     });
   }, [searchQuery, selectedCategory, filterOnlyFavorites, favorites]);
 
-  // Recent tools objects
-  const recentTools = useMemo(() => {
-    return recentToolIds
-      .map((id) => TOOLS_REGISTRY.find((t) => t.id === id))
-      .filter((t): t is ToolDefinition => !!t);
-  }, [recentToolIds]);
-
   // Favorite tools objects
   const favoriteTools = useMemo(() => {
     return TOOLS_REGISTRY.filter((t) => favorites.includes(t.id));
   }, [favorites]);
 
-  return (
-    <div className="w-full flex flex-col">
-      {/* Editorial Hero Section */}
-      {!filterOnlyFavorites && selectedCategory === 'all' && !searchQuery && (
-        <HeroSection
-          onSelectTool={onSelectTool}
-          favorites={favorites}
-          recentToolIds={recentToolIds}
-          onScrollToGrid={scrollToGrid}
-        />
-      )}
+  // Recent tools objects
+  const recentTools = useMemo(() => {
+    return recentToolIds
+      .map((id) => TOOLS_REGISTRY.find((t) => t.id === id))
+      .filter(Boolean) as ToolDefinition[];
+  }, [recentToolIds]);
 
-      {/* Main Grid Content Container */}
-      <div ref={gridRef} className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 py-8 sm:py-12">
-        
-        {/* Search & Filter Bar */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pb-8 mb-8 border-b border-hairline">
-          <div className="relative flex-1 max-w-md">
-            <Search className="w-4 h-4 text-[var(--text-faint)] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Filtrar por nombre, categoría o palabra clave..."
-              className="w-full pl-10 pr-9 py-2.5 bg-[#F1F1F3] dark:bg-[#1A1A20] border border-hairline rounded-[6px] text-xs text-[var(--text-main)] placeholder:text-[var(--text-faint)] focus:outline-none focus:border-[var(--accent-color)] min-h-[44px]"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-[var(--text-faint)] hover:text-[var(--text-main)] cursor-pointer"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            )}
+  return (
+    <div className="space-y-8 pb-12">
+      {/* Hero Welcome Banner */}
+      <div className="relative rounded-3xl p-6 sm:p-10 bg-gradient-to-br from-white via-white to-[var(--accent-subtle)]/40 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800/80 border border-slate-200/80 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div className="max-w-2xl space-y-3 relative z-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-[var(--accent-subtle)] text-[var(--accent-text)] border border-[var(--accent-border)]">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>{TOOLS_REGISTRY.length} herramientas locales sin límites</span>
           </div>
 
-          {/* Status & active filter chips */}
-          <div className="flex items-center gap-3 text-xs text-[var(--text-muted)] flex-wrap">
-            {filterOnlyFavorites && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[var(--accent-subtle)] text-[var(--accent-text)] rounded-full text-xs font-semibold">
-                <Star className="w-3 h-3 fill-current" />
-                <span>Solo favoritas</span>
-                <button
-                  onClick={onClearFavoritesFilter}
-                  className="ml-1 hover:opacity-75 cursor-pointer"
-                  title="Ver todas"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-              </span>
-            )}
+          <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight leading-tight">
+            {greeting} Bienvenido a tu <br className="hidden sm:inline" />
+            <span className="text-[var(--accent-text)]">Caja de Herramientas</span>
+          </h1>
 
-            {selectedCategory !== 'all' && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#F1F1F3] dark:bg-[#1A1A20] rounded-full text-xs font-semibold uppercase tracking-wider text-[var(--text-main)]">
-                <span>Categoría: {selectedCategory}</span>
-                {onSelectCategory && (
-                  <button
-                    onClick={() => onSelectCategory('all')}
-                    className="ml-1 hover:opacity-75 cursor-pointer"
-                    title="Quitar filtro"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                )}
-              </span>
-            )}
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+            Un conjunto moderno de utilidades rápidas y seguras. Todo se procesa 100% en tu navegador: sin backend, sin registro, sin cookies de rastreo y listo para funcionar offline.
+          </p>
 
-            <span className="font-mono text-[11px] text-[var(--text-faint)]">
-              {filteredTools.length} {filteredTools.length === 1 ? 'herramienta' : 'herramientas'}
-            </span>
+          {/* Big Search Bar */}
+          <div className="pt-2">
+            <div className="relative flex items-center">
+              <Search className="w-5 h-5 text-slate-400 absolute left-4 pointer-events-none" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Busca cualquier utilidad (ej. 'contar palabras', 'hash', 'qr', 'colores', 'pdf')..."
+                className="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--accent-ring)] transition"
+              />
+            </div>
           </div>
         </div>
+      </div>
 
-        {/* Empty State */}
-        {filteredTools.length === 0 && (
-          <div className="py-20 text-center flex flex-col items-center justify-center border border-dashed border-hairline rounded-[14px] bg-[#F7F7F8] dark:bg-[#1A1A1E]">
-            <div className="w-12 h-12 rounded-full border border-hairline flex items-center justify-center text-[var(--text-faint)] mb-4">
-              <Search className="w-5 h-5" />
-            </div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-[var(--text-main)] mb-1">
-              Sin resultados encontrados
-            </h3>
-            <p className="text-xs text-[var(--text-muted)] max-w-sm mb-6">
-              No encontramos herramientas que coincidan con "{searchQuery}". Intenta con otros términos como "bits", "hash", "qr" o "fecha".
-            </p>
+      {/* Filter by Category Pills */}
+      <div className="flex flex-wrap items-center gap-2">
+        <button
+          onClick={() => {
+            setSelectedCategory('all');
+            if (onClearFavoritesFilter) onClearFavoritesFilter();
+          }}
+          className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
+            selectedCategory === 'all' && !filterOnlyFavorites
+              ? 'bg-[var(--accent-color)] text-white shadow-xs'
+              : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50'
+          }`}
+        >
+          Todas ({TOOLS_REGISTRY.length})
+        </button>
+
+        {CATEGORIES_LIST.map((cat) => {
+          const isSelected = selectedCategory === cat.id && !filterOnlyFavorites;
+          const count = TOOLS_REGISTRY.filter((t) => t.category === cat.id).length;
+          return (
             <button
+              key={cat.id}
               onClick={() => {
-                setSearchQuery('');
-                if (onSelectCategory) onSelectCategory('all');
+                setSelectedCategory(cat.id);
                 if (onClearFavoritesFilter) onClearFavoritesFilter();
               }}
-              className="px-5 py-2 text-xs font-bold uppercase tracking-wider bg-[#111113] dark:bg-[#F4F4F5] text-white dark:text-[#111113] rounded-[6px] cursor-pointer min-h-[40px]"
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
+                isSelected
+                  ? 'bg-[var(--accent-color)] text-white shadow-xs'
+                  : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50'
+              }`}
             >
-              Restablecer filtros
+              {cat.name} ({count})
             </button>
+          );
+        })}
+      </div>
+
+      {/* SECTION: FAVORITOS (If present and no specific category filter) */}
+      {!searchQuery && selectedCategory === 'all' && favoriteTools.length > 0 && (
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2">
+              <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+              Favoritos ({favoriteTools.length})
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {favoriteTools.map((tool) => (
+              <ToolCard
+                key={tool.id}
+                tool={tool}
+                isFavorite={true}
+                onSelect={() => onSelectTool(tool.id)}
+                onToggleFavorite={(e) => onToggleFavorite(tool.id, e)}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* SECTION: USADAS RECIENTEMENTE (If present and no search) */}
+      {!searchQuery && selectedCategory === 'all' && !filterOnlyFavorites && recentTools.length > 0 && (
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2">
+              <Clock className="w-4 h-4 text-[var(--accent-text)]" />
+              Usadas Recientemente
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {recentTools.slice(0, 3).map((tool) => (
+              <ToolCard
+                key={tool.id}
+                tool={tool}
+                isFavorite={favorites.includes(tool.id)}
+                onSelect={() => onSelectTool(tool.id)}
+                onToggleFavorite={(e) => onToggleFavorite(tool.id, e)}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* SECTION: TODAS LAS HERRAMIENTAS */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between pb-1 border-b border-slate-200/80 dark:border-slate-800">
+          <h2 className="text-base font-extrabold text-slate-900 dark:text-slate-100">
+            {filterOnlyFavorites
+              ? 'Tus Herramientas Favoritas'
+              : selectedCategory !== 'all'
+              ? CATEGORIES_LIST.find((c) => c.id === selectedCategory)?.name || 'Herramientas'
+              : 'Todas las Herramientas'}
+          </h2>
+          <span className="text-xs text-slate-400 font-medium">
+            {filteredTools.length} disponibles
+          </span>
+        </div>
+
+        {filteredTools.length === 0 ? (
+          <div className="p-12 text-center rounded-3xl border border-dashed border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/40">
+            <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+              No se encontraron herramientas
+            </p>
+            <p className="text-xs text-slate-400 mt-1">
+              Prueba buscando con otro término o desactiva los filtros actuales.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+            {filteredTools.map((tool) => (
+              <ToolCard
+                key={tool.id}
+                tool={tool}
+                isFavorite={favorites.includes(tool.id)}
+                onSelect={() => onSelectTool(tool.id)}
+                onToggleFavorite={(e) => onToggleFavorite(tool.id, e)}
+              />
+            ))}
           </div>
         )}
+      </div>
 
-        {/* Favorites section (if in favorites filter or if favorites exists and no query) */}
-        {filterOnlyFavorites && favoriteTools.length > 0 && (
-          <div className="mb-14">
-            <div className="flex items-baseline gap-4 mb-6">
-              <span className="text-3xl font-light font-mono text-[var(--deco-number)]">
-                ★
-              </span>
-              <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--text-main)]">
-                Tus Herramientas Favoritas
-              </h2>
-              <div className="flex-1 h-[1px] bg-hairline" />
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {favoriteTools.map((tool, idx) => (
-                <ToolGridCard
-                  key={tool.id}
-                  tool={tool}
-                  index={idx}
-                  isFavorite={true}
-                  onToggleFavorite={onToggleFavorite}
-                  onSelectTool={onSelectTool}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Recents section (when browsing home without search filter) */}
-        {!searchQuery && selectedCategory === 'all' && !filterOnlyFavorites && recentTools.length > 0 && (
-          <div className="mb-16">
-            <div className="flex items-baseline gap-4 mb-6">
-              <span className="text-3xl font-light font-mono text-[var(--deco-number)]">
-                REC
-              </span>
-              <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--text-main)]">
-                Usadas Recientemente
-              </h2>
-              <div className="flex-1 h-[1px] bg-hairline" />
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {recentTools.slice(0, 4).map((tool, idx) => (
-                <ToolGridCard
-                  key={tool.id}
-                  tool={tool}
-                  index={idx}
-                  isFavorite={favorites.includes(tool.id)}
-                  onToggleFavorite={onToggleFavorite}
-                  onSelectTool={onSelectTool}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Categories Sections */}
-        {!filterOnlyFavorites &&
-          CATEGORIES_LIST.map((category, catIdx) => {
-            const categoryTools = filteredTools.filter((t) => t.category === category.id);
-            if (categoryTools.length === 0) return null;
-
-            const categoryNumber = catIdx < 9 ? `0${catIdx + 1}` : `${catIdx + 1}`;
-
-            return (
-              <section key={category.id} className="mb-16 scroll-mt-24">
-                {/* Section Header: Number thin & large + Category title + Hairline */}
-                <div className="flex items-baseline gap-4 mb-6">
-                  <span
-                    aria-hidden="true"
-                    className="text-3xl sm:text-4xl font-extralight font-mono text-[var(--deco-number)] select-none"
-                  >
-                    {categoryNumber}
-                  </span>
-                  <div className="flex items-baseline gap-2">
-                    <h2 className="text-base sm:text-lg font-semibold uppercase tracking-[0.16em] text-[var(--text-main)]">
-                      {category.name}
-                    </h2>
-                    <span className="text-xs text-[var(--text-faint)] font-mono">
-                      ({categoryTools.length})
-                    </span>
-                  </div>
-                  <div className="flex-1 h-[1px] bg-hairline" />
-                </div>
-
-                {/* Grid: 4 cols (>=1280px), 3 (>=1024px), 2 (>=640px), 1 (<480px) */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                  {categoryTools.map((tool, idx) => (
-                    <ToolGridCard
-                      key={tool.id}
-                      tool={tool}
-                      index={idx}
-                      isFavorite={favorites.includes(tool.id)}
-                      onToggleFavorite={onToggleFavorite}
-                      onSelectTool={onSelectTool}
-                    />
-                  ))}
-                </div>
-              </section>
-            );
-          })}
+      {/* Privacy Notice Banner at bottom */}
+      <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200/80 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500">
+        <div className="flex items-center gap-2">
+          <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
+          <span>Todo se procesa en tu dispositivo, nada se sube a ningún servidor.</span>
+        </div>
+        <span className="font-semibold text-[var(--accent-text)] hidden sm:inline">
+          100% Offline y Privado
+        </span>
       </div>
     </div>
   );
 };
 
-// Subcomponent: Tool Grid Card in Editorial Aesthetic
-interface ToolGridCardProps {
+// Tool Card Component
+const ToolCard: React.FC<{
   tool: ToolDefinition;
-  index: number;
   isFavorite: boolean;
-  onToggleFavorite: (id: string, e: React.MouseEvent) => void;
-  onSelectTool: (id: string) => void;
-}
-
-const ToolGridCard: React.FC<ToolGridCardProps> = ({
-  tool,
-  index,
-  isFavorite,
-  onToggleFavorite,
-  onSelectTool,
-}) => {
+  onSelect: () => void;
+  onToggleFavorite: (e: React.MouseEvent) => void;
+}> = ({ tool, isFavorite, onSelect, onToggleFavorite }) => {
   const IconComp = tool.icon;
-  const cardNumber = index < 9 ? `0${index + 1}` : `${index + 1}`;
 
   return (
-    <div
-      onClick={() => onSelectTool(tool.id)}
-      className="group relative bg-[var(--bg-panel)] rounded-[14px] border border-hairline p-5 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-black/50 cursor-pointer flex flex-col justify-between min-h-[170px]"
+    <Card
+      hover
+      onClick={onSelect}
+      className="cursor-pointer group flex flex-col justify-between p-5 space-y-3 relative overflow-hidden transition-all active:scale-[0.99]"
     >
-      {/* Top row: Monospace index, Lucide circle icon, Favorite toggle */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
-          {/* Fine outline circle containing the Lucide icon */}
-          <div className="w-10 h-10 rounded-full border border-hairline bg-[#F7F7F8] dark:bg-[#1A1A1E] flex items-center justify-center text-[var(--text-main)] group-hover:border-[var(--accent-color)] group-hover:text-[var(--accent-color)] transition-colors">
-            <IconComp className="w-4 h-4 stroke-[1.5]" />
-          </div>
-          <span className="font-mono text-[11px] text-[var(--text-faint)]">
-            {cardNumber}
-          </span>
+      <div className="flex items-start justify-between gap-3">
+        <div className="p-3 rounded-2xl bg-[var(--accent-subtle)] text-[var(--accent-text)] group-hover:scale-110 transition-transform shadow-2xs">
+          <IconComp className="w-6 h-6" />
         </div>
 
-        {/* Favorite Star Button */}
         <button
-          onClick={(e) => onToggleFavorite(tool.id, e)}
-          className={`p-1.5 rounded-full border border-transparent hover:border-hairline transition cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center ${
+          onClick={onToggleFavorite}
+          className={`p-2 rounded-xl transition cursor-pointer ${
             isFavorite
-              ? 'text-amber-500 hover:text-amber-600'
-              : 'text-[var(--text-faint)] hover:text-[var(--text-main)]'
+              ? 'text-amber-400 hover:text-amber-500 bg-amber-50/50 dark:bg-amber-950/20'
+              : 'text-slate-300 hover:text-amber-400 hover:bg-slate-100 dark:hover:bg-slate-800'
           }`}
           title={isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos'}
           aria-label={isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos'}
         >
-          <Star className={`w-4 h-4 ${isFavorite ? 'fill-current' : 'stroke-[1.5]'}`} />
+          <Star className={`w-4 h-4 ${isFavorite ? 'fill-amber-400' : ''}`} />
         </button>
       </div>
 
-      {/* Middle: Tool Name with hover accent underline & Description */}
-      <div>
-        <h3 className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-[var(--text-main)] group-hover:text-[var(--accent-text)] transition-colors inline-block relative">
-          <span>{tool.name}</span>
-          <span className="block max-w-0 group-hover:max-w-full transition-all duration-200 h-[1.5px] bg-[var(--accent-color)] mt-0.5" />
+      <div className="space-y-1">
+        <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 group-hover:text-[var(--accent-text)] transition-colors">
+          {tool.name}
         </h3>
-        <p className="text-xs text-[var(--text-muted)] line-clamp-2 mt-1 leading-relaxed">
+        <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
           {tool.description}
         </p>
       </div>
 
-      {/* Bottom info tag */}
-      <div className="pt-3 mt-3 border-t border-hairline/60 flex items-center justify-between text-[10px] font-mono uppercase text-[var(--text-faint)]">
-        <span>{tool.category}</span>
-        <span className="opacity-0 group-hover:opacity-100 text-[var(--accent-color)] font-bold transition-opacity">
-          ABRIR →
+      <div className="pt-2 flex items-center justify-between text-[11px] font-bold text-[var(--accent-text)]">
+        <span className="uppercase text-[10px] text-slate-400 font-semibold tracking-wider">
+          {tool.category}
+        </span>
+        <span className="flex items-center gap-0.5 group-hover:translate-x-1 transition-transform">
+          Abrir <ChevronRight className="w-3.5 h-3.5" />
         </span>
       </div>
-    </div>
+    </Card>
   );
 };

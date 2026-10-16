@@ -1,8 +1,10 @@
 import React, { useRef } from 'react';
 import {
+  Settings,
   Sun,
   Moon,
   Laptop,
+  Palette,
   Download,
   Upload,
   Trash2,
@@ -123,7 +125,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
       <div className="space-y-6 text-xs">
         {/* Theme Mode Selector */}
         <div className="space-y-2">
-          <label className="font-semibold uppercase tracking-wider text-[var(--text-faint)] block text-[11px]">
+          <label className="font-bold uppercase tracking-wider text-slate-500 block">
             Modo de Apariencia
           </label>
           <div className="grid grid-cols-3 gap-2">
@@ -138,24 +140,24 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
                 <button
                   key={t.id}
                   onClick={() => setTheme(t.id as any)}
-                  className={`flex flex-col items-center justify-center p-3 rounded-[8px] border transition-all cursor-pointer min-h-[56px] ${
+                  className={`flex flex-col items-center justify-center p-3 rounded-2xl border transition-all cursor-pointer ${
                     isSelected
-                      ? 'border-[var(--accent-color)] bg-[var(--accent-subtle)] text-[var(--accent-text)] font-bold shadow-2xs'
-                      : 'border-hairline bg-[#F7F7F8] dark:bg-[#1A1A1E] text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[#EAEAEA]'
+                      ? 'border-[var(--accent-color)] bg-[var(--accent-subtle)] text-[var(--accent-text)] font-bold shadow-xs'
+                      : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-50'
                   }`}
                 >
-                  <IconComp className="w-4 h-4 mb-1.5" />
-                  <span className="uppercase tracking-wider text-[11px]">{t.label}</span>
+                  <IconComp className="w-5 h-5 mb-1.5" />
+                  <span>{t.label}</span>
                 </button>
               );
             })}
           </div>
         </div>
 
-        {/* Accent Colors as Color Circles */}
+        {/* 6 Pastel Accent Colors */}
         <div className="space-y-2">
-          <label className="font-semibold uppercase tracking-wider text-[var(--text-faint)] block text-[11px]">
-            Color de Acento Editorial
+          <label className="font-bold uppercase tracking-wider text-slate-500 block">
+            Color de Acento Pastel (6 opciones)
           </label>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {ACCENT_OPTIONS.map((opt) => {
@@ -164,19 +166,19 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
                 <button
                   key={opt.id}
                   onClick={() => setAccent(opt.id)}
-                  className={`flex items-center gap-2.5 p-2.5 rounded-[8px] border transition-all cursor-pointer min-h-[44px] ${
+                  className={`flex items-center gap-2.5 p-2.5 rounded-xl border transition-all cursor-pointer ${
                     isSelected
-                      ? 'border-[var(--accent-color)] bg-[var(--accent-subtle)] text-[var(--text-main)] font-bold'
-                      : 'border-hairline bg-[#F7F7F8] dark:bg-[#1A1A1E] text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[#EAEAEA]'
+                      ? 'border-slate-400 dark:border-slate-500 bg-slate-50 dark:bg-slate-800/80 font-bold'
+                      : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-50'
                   }`}
                 >
                   <span
-                    className="w-4 h-4 rounded-full shrink-0 flex items-center justify-center border border-black/10 dark:border-white/20 shadow-2xs"
+                    className="w-4 h-4 rounded-full shrink-0 flex items-center justify-center shadow-2xs"
                     style={{ backgroundColor: opt.color }}
                   >
                     {isSelected && <Check className="w-2.5 h-2.5 text-white" />}
                   </span>
-                  <span className="truncate text-xs">{opt.name}</span>
+                  <span className="truncate">{opt.name}</span>
                 </button>
               );
             })}
@@ -184,8 +186,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
         </div>
 
         {/* Data Backup & Restore */}
-        <div className="space-y-3 pt-3 border-t border-hairline">
-          <label className="font-semibold uppercase tracking-wider text-[var(--text-faint)] block text-[11px]">
+        <div className="space-y-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+          <label className="font-bold uppercase tracking-wider text-slate-500 block">
             Copia de Seguridad y Datos Locales
           </label>
 
@@ -194,20 +196,20 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
               variant="outline"
               size="sm"
               className="flex-1"
-              icon={<Download className="w-3.5 h-3.5" />}
+              icon={<Download className="w-4 h-4" />}
               onClick={handleExportAll}
             >
-              Exportar todo
+              Exportar todo (JSON)
             </Button>
 
             <Button
               variant="outline"
               size="sm"
               className="flex-1"
-              icon={<Upload className="w-3.5 h-3.5" />}
+              icon={<Upload className="w-4 h-4" />}
               onClick={() => fileInputRef.current?.click()}
             >
-              Restaurar
+              Restaurar desde JSON
             </Button>
             <input
               ref={fileInputRef}
@@ -220,7 +222,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
 
           <button
             onClick={handleClearAllData}
-            className="flex items-center gap-1.5 text-rose-500 hover:text-rose-600 transition text-[11px] font-semibold pt-1 cursor-pointer uppercase tracking-wider"
+            className="flex items-center gap-1.5 text-rose-500 hover:text-rose-600 transition text-xs font-semibold pt-1 cursor-pointer"
           >
             <Trash2 className="w-3.5 h-3.5" />
             <span>Borrar todos los datos locales y restablecer</span>
@@ -228,12 +230,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
         </div>
 
         {/* Privacy Assurance Banner */}
-        <div className="p-3.5 rounded-[8px] bg-[#F7F7F8] dark:bg-[#1A1A1E] border border-hairline flex items-start gap-2.5 text-[var(--text-main)]">
-          <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+        <div className="p-3.5 rounded-2xl bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/60 flex items-start gap-2.5 text-emerald-900 dark:text-emerald-200">
+          <ShieldCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
           <div className="space-y-0.5">
-            <p className="font-bold uppercase tracking-wider text-[11px]">Privacidad 100% Local</p>
-            <p className="text-[11px] leading-relaxed text-[var(--text-muted)]">
-              Todo se procesa en tu navegador. Sin base de datos remota, sin telemetría y sin APIs de terceros.
+            <p className="font-bold">Privacidad 100% Local</p>
+            <p className="text-[11px] leading-relaxed opacity-90">
+              Todo se procesa en tu dispositivo, nada se sube a ningún servidor ni se comparte con terceros.
             </p>
           </div>
         </div>

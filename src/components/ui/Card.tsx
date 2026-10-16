@@ -7,10 +7,8 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 export const Card: React.FC<CardProps> = ({ className = '', hover = false, children, ...props }) => {
   return (
     <div
-      className={`bg-[var(--bg-panel)] rounded-[14px] border border-hairline p-4 sm:p-6 transition-all duration-200 ${
-        hover
-          ? 'hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-black/50 hover:border-slate-300 dark:hover:border-zinc-700'
-          : ''
+      className={`bg-white dark:bg-slate-900/90 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm p-4 sm:p-6 transition-all duration-200 ${
+        hover ? 'hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700' : ''
       } ${className}`}
       {...props}
     >
