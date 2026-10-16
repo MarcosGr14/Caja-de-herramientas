@@ -62,8 +62,13 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     [addToast]
   );
 
+  const contextValue = React.useMemo(
+    () => ({ toast: addToast, success, error, info }),
+    [addToast, success, error, info]
+  );
+
   return (
-    <ToastContext.Provider value={{ toast: addToast, success, error, info }}>
+    <ToastContext.Provider value={contextValue}>
       {children}
       {/* Toast container floating at bottom-right or top-center */}
       <div className="fixed bottom-20 md:bottom-6 right-4 left-4 md:left-auto md:w-96 z-50 flex flex-col gap-2 pointer-events-none">

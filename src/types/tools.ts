@@ -6,7 +6,8 @@ export type ToolCategory =
   | 'diseno'
   | 'seguridad'
   | 'calculo'
-  | 'pdf';
+  | 'pdf'
+  | 'sistemas';
 
 export interface CategoryInfo {
   id: ToolCategory;

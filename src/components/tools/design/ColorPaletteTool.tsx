@@ -152,17 +152,22 @@ interface SavedPalette {
   createdAt: number;
 }
 
+const DEFAULT_SAVED_PALETTES: SavedPalette[] = [
+  {
+    id: 'default-cozy',
+    name: 'Pasteles Cálidos',
+    colors: ['#f472b6', '#a78bfa', '#38bdf8', '#34d399', '#fb923c'],
+    createdAt: 1700000000000,
+  },
+];
+
 export default function ColorPaletteTool() {
   const [baseColor, setBaseColor] = useState('#0ea5e9');
   const [contrastText, setContrastText] = useState('#ffffff');
-  const [savedPalettes, setSavedPalettes] = useLocalStorage<SavedPalette[]>('app-saved-palettes', [
-    {
-      id: 'default-cozy',
-      name: 'Pasteles Cálidos',
-      colors: ['#f472b6', '#a78bfa', '#38bdf8', '#34d399', '#fb923c'],
-      createdAt: Date.now(),
-    },
-  ]);
+  const [savedPalettes, setSavedPalettes] = useLocalStorage<SavedPalette[]>(
+    'app-saved-palettes',
+    DEFAULT_SAVED_PALETTES
+  );
   const [paletteNameInput, setPaletteNameInput] = useState('');
   const { success, error: toastError } = useToast();
 

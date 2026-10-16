@@ -84,7 +84,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         <div className="max-w-2xl space-y-3 relative z-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-[var(--accent-subtle)] text-[var(--accent-text)] border border-[var(--accent-border)]">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>11 herramientas locales sin límites</span>
+            <span>{TOOLS_REGISTRY.length} herramientas locales sin límites</span>
           </div>
 
           <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight leading-tight">

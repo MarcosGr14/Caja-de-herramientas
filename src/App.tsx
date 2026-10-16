@@ -13,6 +13,15 @@ import { useTheme } from './hooks/useTheme';
 import { TOOLS_REGISTRY } from './data/tools';
 import { ToolDefinition } from './types/tools';
 
+const DEFAULT_FAVORITES: string[] = [
+  'contador-palabras',
+  'formateador-json',
+  'colores-paletas',
+  'generador-contrasenas',
+];
+
+const DEFAULT_RECENTS: string[] = [];
+
 function MainApp() {
   // Theme hook to ensure proper HTML attributes
   useTheme();
@@ -25,14 +34,8 @@ function MainApp() {
   });
 
   // Local storage for Favorites and Recents
-  const [favorites, setFavorites] = useLocalStorage<string[]>('app-favorites', [
-    'contador-palabras',
-    'formateador-json',
-    'colores-paletas',
-    'generador-contrasenas',
-  ]);
-
-  const [recentToolIds, setRecentToolIds] = useLocalStorage<string[]>('app-recents', []);
+  const [favorites, setFavorites] = useLocalStorage<string[]>('app-favorites', DEFAULT_FAVORITES);
+  const [recentToolIds, setRecentToolIds] = useLocalStorage<string[]>('app-recents', DEFAULT_RECENTS);
 
   // UI state
   const [isSearchOpen, setIsSearchOpen] = useState(false);

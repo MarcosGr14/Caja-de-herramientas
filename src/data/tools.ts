@@ -11,10 +11,22 @@ import {
   Scale,
   GraduationCap,
   Files,
+  Terminal,
+  Network,
+  Shield,
+  CalendarClock,
+  Code2,
+  Clock,
 } from 'lucide-react';
 import { ToolDefinition, CategoryInfo, ToolCategory } from '../types/tools';
 
 export const CATEGORIES_LIST: CategoryInfo[] = [
+  {
+    id: 'sistemas',
+    name: 'Sistemas y Redes',
+    description: 'Bases numéricas, operaciones binarias, subredes IPv4, permisos chmod y tareas programadas cron',
+    iconName: 'Terminal',
+  },
   {
     id: 'texto',
     name: 'Texto y Redacción',
@@ -24,7 +36,7 @@ export const CATEGORIES_LIST: CategoryInfo[] = [
   {
     id: 'desarrollo',
     name: 'Desarrollo y Código',
-    description: 'Formateo de JSON, generación de hashes criptográficos y UUID v4',
+    description: 'Formateo de JSON, generación de hashes criptográficos, UUID v4, RegEx y fechas Unix',
     iconName: 'FileJson',
   },
   {
@@ -54,7 +66,106 @@ export const CATEGORIES_LIST: CategoryInfo[] = [
 ];
 
 export const TOOLS_REGISTRY: ToolDefinition[] = [
+  // ==========================================
+  // CATEGORÍA SISTEMAS Y REDES (NUEVA)
+  // ==========================================
+  {
+    id: 'bases-bits',
+    name: 'Calculadora de Bases y Bits',
+    shortName: 'Bases y Bits',
+    category: 'sistemas',
+    icon: Binary,
+    badge: 'Nuevo',
+    description:
+      'Conversor entre binario, octal, hex, decimal y bases 2-36 con BigInt, operaciones bit a bit, complementos A1/A2, aritmética binaria paso a paso, IEEE 754 y tabla ASCII.',
+    keywords: [
+      'bases',
+      'binario',
+      'hexadecimal',
+      'octal',
+      'bits',
+      'bitwise',
+      'complemento',
+      'ieee754',
+      'ascii',
+      'bigint',
+      'sistemas',
+    ],
+    component: React.lazy(() => import('../components/tools/systems/BaseBitCalculator')),
+  },
+  {
+    id: 'calculadora-subredes',
+    name: 'Calculadora de Subredes IPv4 y VLSM',
+    shortName: 'Subredes IPv4',
+    category: 'sistemas',
+    icon: Network,
+    badge: 'Nuevo',
+    description:
+      'Cálculo de máscaras de red, CIDR, broadcast, rango utilizable, división en subredes iguales y dimensionamiento VLSM con exportación a CSV.',
+    keywords: [
+      'subredes',
+      'ipv4',
+      'cidr',
+      'vlsm',
+      'mascara',
+      'broadcast',
+      'hosts',
+      'redes',
+      'ip',
+      'networking',
+    ],
+    component: React.lazy(() => import('../components/tools/systems/SubnetCalculator')),
+  },
+  {
+    id: 'permisos-chmod',
+    name: 'Calculadora de Permisos Chmod y Umask',
+    shortName: 'Permisos Chmod',
+    category: 'sistemas',
+    icon: Shield,
+    badge: 'Nuevo',
+    description:
+      'Generador visual de permisos Unix (rwx, octal 755, 644), flags especiales (SUID, SGID, Sticky bit), cálculo inverso de umask y generador de comandos.',
+    keywords: [
+      'chmod',
+      'permisos',
+      'linux',
+      'unix',
+      'octal',
+      'umask',
+      'rwx',
+      'suid',
+      'sgid',
+      'sticky',
+      'terminal',
+    ],
+    component: React.lazy(() => import('../components/tools/systems/ChmodCalculator')),
+  },
+  {
+    id: 'expresiones-cron',
+    name: 'Parser y Planificador de Expresiones Cron',
+    shortName: 'Expresiones Cron',
+    category: 'sistemas',
+    icon: CalendarClock,
+    badge: 'Nuevo',
+    description:
+      'Traductor de expresiones cron a español natural, constructor visual asistido, simulación de próximas ejecuciones con cuenta atrás y soporte de husos horarios.',
+    keywords: [
+      'cron',
+      'crontab',
+      'programador',
+      'tareas',
+      'expresiones',
+      'tiempo',
+      'schedule',
+      'planificador',
+      'servidor',
+    ],
+    component: React.lazy(() => import('../components/tools/systems/CronExpressionTool')),
+  },
+
+  // ==========================================
   // CATEGORÍA TEXTO
+  // ==========================================
   {
     id: 'contador-palabras',
     name: 'Contador de Palabras y Caracteres',
@@ -89,7 +200,9 @@ export const TOOLS_REGISTRY: ToolDefinition[] = [
     component: React.lazy(() => import('../components/tools/text/Base64Tool')),
   },
 
-  // CATEGORÍA DESARROLLO
+  // ==========================================
+  // CATEGORÍA DESARROLLO (EXISTENTES + NUEVAS)
+  // ==========================================
   {
     id: 'formateador-json',
     name: 'Formateador y Validador de JSON',
@@ -112,8 +225,55 @@ export const TOOLS_REGISTRY: ToolDefinition[] = [
     keywords: ['hash', 'sha256', 'sha512', 'sha1', 'uuid', 'v4', 'checksum', 'crypto', 'seguro'],
     component: React.lazy(() => import('../components/tools/dev/HashUuidGenerator')),
   },
+  {
+    id: 'tester-regex',
+    name: 'Tester y Evaluador de Expresiones Regulares',
+    shortName: 'Tester RegEx',
+    category: 'desarrollo',
+    icon: Code2,
+    badge: 'Nuevo',
+    description:
+      'Evaluación de patrones RegEx con Web Worker sin bloquear la interfaz, resaltado visual en vivo, explorador de grupos nombrados y modo reemplazo.',
+    keywords: [
+      'regex',
+      'expresiones regulares',
+      'tester',
+      'reemplazo',
+      'grupos',
+      'patron',
+      'regexp',
+      'match',
+      'desarrollo',
+    ],
+    component: React.lazy(() => import('../components/tools/dev/RegexTesterTool')),
+  },
+  {
+    id: 'timestamp-fecha-hora',
+    name: 'Conversor de Fecha, Hora y Timestamp Unix',
+    shortName: 'Timestamp y Fechas',
+    category: 'desarrollo',
+    icon: Clock,
+    badge: 'Nuevo',
+    description:
+      'Conversión bidireccional entre Epoch Unix (s, ms), ISO 8601, RFC 2822, comparador de zonas horarias mundiales y cálculo de diferencia de fechas.',
+    keywords: [
+      'timestamp',
+      'unix',
+      'epoch',
+      'fecha',
+      'hora',
+      'iso8601',
+      'zonas horarias',
+      'timezone',
+      'diferencia',
+      'fechas',
+    ],
+    component: React.lazy(() => import('../components/tools/dev/DateTimeConverterTool')),
+  },
 
+  // ==========================================
   // CATEGORÍA DISEÑO
+  // ==========================================
   {
     id: 'colores-paletas',
     name: 'Selector de Color, Paletas y Contraste WCAG',
@@ -137,7 +297,9 @@ export const TOOLS_REGISTRY: ToolDefinition[] = [
     component: React.lazy(() => import('../components/tools/design/QrGeneratorTool')),
   },
 
+  // ==========================================
   // CATEGORÍA SEGURIDAD
+  // ==========================================
   {
     id: 'generador-contrasenas',
     name: 'Generador de Contraseñas y Frases Seguras',
@@ -150,7 +312,9 @@ export const TOOLS_REGISTRY: ToolDefinition[] = [
     component: React.lazy(() => import('../components/tools/security/PasswordGenerator')),
   },
 
+  // ==========================================
   // CATEGORÍA CÁLCULO
+  // ==========================================
   {
     id: 'convertidor-unidades',
     name: 'Convertidor de Unidades Multidimensional',
@@ -174,7 +338,9 @@ export const TOOLS_REGISTRY: ToolDefinition[] = [
     component: React.lazy(() => import('../components/tools/calc/GradeCalculator')),
   },
 
+  // ==========================================
   // CATEGORÍA PDF
+  // ==========================================
   {
     id: 'unir-dividir-pdf',
     name: 'Unir y Dividir Documentos PDF',
